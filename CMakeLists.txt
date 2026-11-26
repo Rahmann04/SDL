@@ -1209,8 +1209,11 @@ endif()
 # Platform-specific options and settings
 if(ANDROID)
   file(GLOB ANDROID_CORE_SOURCES ${SDL2_SOURCE_DIR}/src/core/android/*.c)
-  list(APPEND SOURCE_FILES ${ANDROID_CORE_SOURCES} ${ANDROID_NDK}/sources/android/cpufeatures/cpu-features.c)
-  set_property(SOURCE "${ANDROID_NDK}/sources/android/cpufeatures/cpu-features.c" APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-declaration-after-statement")
+  list(APPEND SOURCE_FILES ${ANDROID_CORE_SOURCES})
+  if(EXISTS "${ANDROID_NDK}/sources/android/cpufeatures/cpu-features.c")
+    list(APPEND SOURCE_FILES "${ANDROID_NDK}/sources/android/cpufeatures/cpu-features.c")
+    set_property(SOURCE "${ANDROID_NDK}/sources/android/cpufeatures/cpu-features.c" APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-declaration-after-statement")
+  endif()
 
   if(SDL_MISC)
     file(GLOB ANDROID_MISC_SOURCES ${SDL2_SOURCE_DIR}/src/misc/android/*.c)
@@ -3332,7 +3335,7 @@ if(NOT WINDOWS_STORE AND NOT SDL2_DISABLE_SDL2MAIN)
   set_property(TARGET SDL2main PROPERTY INTERFACE_SDL_VERSION "SDL2")
 endif()
 
-if(ANDROID)
+if(ANDROID AND EXISTS "${ANDROID_NDK}/sources/android/cpufeatures")
   target_include_directories(sdl-build-options INTERFACE "${ANDROID_NDK}/sources/android/cpufeatures")
 endif()
 
